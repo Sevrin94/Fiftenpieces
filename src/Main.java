@@ -1,19 +1,32 @@
+package Pusslet;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Random;
 
+
 public class Main extends JFrame implements ActionListener {
 
+    public JFrame pussel = new JFrame();
+    public JPanel p1 = new JPanel(new GridLayout(4,4));
+    public JPanel p2 = new JPanel();
+    public JButton blankTile = new JButton();
+    public JButton reset = new JButton("Reset");
 
-    JFrame pussel = new JFrame();
-    JPanel p1 = new JPanel(new GridLayout(4,4));
-    JPanel p2 = new JPanel();
-    JButton blankTile = new JButton();
-    JButton reset = new JButton("Reset");
-
+    public JButton order = new JButton("Order");
     int[] nummer = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+
+    public Main (int n){
+        pussel.setBounds(0, 0, 500, 600);
+        p1.setBounds(0, 0, 500,500);
+        p1.setLayout(new GridLayout(4, 4));
+        knappar2(n);
+        pussel.setVisible(true);
+        pussel.setDefaultCloseOperation(EXIT_ON_CLOSE);
+    }
+
 
 
     public Main() {
@@ -23,6 +36,45 @@ public class Main extends JFrame implements ActionListener {
         knappar();
         pussel.setVisible(true);
         pussel.setDefaultCloseOperation(EXIT_ON_CLOSE);
+    }
+
+    public void knappar2(int n) {
+        for(int i=1; i<n; i++){
+            pussel.add(p1);
+            String buttonLabel = String.valueOf(i);
+            JButton tile = new JButton(buttonLabel);
+            p1.add(tile);
+            tile.addActionListener(this);
+        }
+        p1.add(blankTile);
+        JButton tile = new JButton("15");
+        p1.add(tile);
+        pussel.add(p2, BorderLayout.SOUTH);
+        p2.add(reset);
+        p2.add(order);
+        blankTile.setVisible(false);
+        tile.addActionListener(this);
+        reset.addActionListener(this);
+        order.addActionListener(this);
+        blankTile.addActionListener(this);
+    }
+
+    public void knappar() {
+        pussel.add(p1);
+        for (int i = 1; i < 16; i++) {
+            String buttonLabel = numret();
+            JButton tile = new JButton(buttonLabel);
+            p1.add(tile);
+            tile.addActionListener(this);
+        }
+        p1.add(blankTile);
+        pussel.add(p2, BorderLayout.SOUTH);
+        p2.add(reset);
+        p2.add(order);
+        blankTile.setVisible(false);
+        reset.addActionListener(this);
+        order.addActionListener(this);
+        blankTile.addActionListener(this);
     }
 
     public String numret() {
@@ -39,24 +91,6 @@ public class Main extends JFrame implements ActionListener {
             }
         return s;
     }
-
-    public void knappar() {
-        pussel.add(p1);
-        for (int i = 1; i < 16; i++) {
-            String buttonLabel = numret();
-            JButton tile = new JButton(buttonLabel);
-            p1.add(tile);
-            tile.addActionListener(this);
-        }
-        p1.add(blankTile);
-        pussel.add(p2, BorderLayout.SOUTH);
-        p2.add(reset);
-        blankTile.setVisible(false);
-        reset.addActionListener(this);
-        blankTile.addActionListener(this);
-    }
-
-
     public void actionPerformed(ActionEvent e) {
 
         if(e.getSource()==reset)
@@ -65,20 +99,26 @@ public class Main extends JFrame implements ActionListener {
             pussel.dispose();
             new Main();
         }
-        else{JButton tile = (JButton) e.getSource();
-        int tileIndex = getIndexOfButton(tile);
+        if(e.getSource()==order)
 
-        if (
-                isValidMove(tileIndex)
-        ) {
-            blankTile.setText(tile.getText());
-            blankTile.setVisible(true);
-            tile.setVisible(false);
-            blankTile = tile;
+        {
+            pussel.dispose();
+            new Main(15);
         }
-    }
+        else{JButton tile = (JButton) e.getSource();
+            int tileIndex = getIndexOfButton(tile);
 
-}
+            if (
+                    isValidMove(tileIndex)
+            ) {
+                blankTile.setText(tile.getText());
+                blankTile.setVisible(true);
+                tile.setVisible(false);
+                blankTile = tile;
+            }
+        }
+
+    }
     public int getIndexOfButton(JButton tile) {
         for (int i = 0; i < p1.getComponents().length; i++) {
             if (tile.hashCode() == p1.getComponent(i).hashCode()) {
