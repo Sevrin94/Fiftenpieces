@@ -106,7 +106,7 @@ public class Main extends JFrame implements ActionListener {
             pussel.dispose();
             new Main();
         }
-        if(e.getSource()==order)
+        else if(e.getSource()==order)
 
         {
             pussel.dispose();
