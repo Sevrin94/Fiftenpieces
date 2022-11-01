@@ -4,7 +4,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
+
+import static java.util.Collections.swap;
 
 
 public class Main extends JFrame implements ActionListener {
@@ -20,8 +26,13 @@ public class Main extends JFrame implements ActionListener {
     int x = 0;
     JLabel count = new JLabel("Antal drag " + x);
 
-
+    List<String> list2 = new ArrayList<>();
+    List<String> facit = new ArrayList<>(Arrays.asList
+            ("1", "2","3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "blank"));
     int[] nummer = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+    String[] list = new String[16];
+
+    String [][] place = new String[4][4];
 
     public Main (int n){
         pussel.setBounds(0, 0, 500, 600);
@@ -39,20 +50,24 @@ public class Main extends JFrame implements ActionListener {
         p1.setBounds(0, 0, 500,500);
         p1.setLayout(new GridLayout(4, 4));
         knappar();
+        sortering();
         pussel.setVisible(true);
         pussel.setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 
     public void knappar2(int n) {
         for(int i=1; i<n; i++){
-            pussel.add(p1);
             String buttonLabel = String.valueOf(i);
             JButton tile = new JButton(buttonLabel);
             p1.add(tile);
+            list2.add(buttonLabel);
             tile.addActionListener(this);
         }
+        pussel.add(p1);
         p1.add(blankTile);
+        list2.add("blank");
         JButton tile = new JButton("15");
+        list2.add("15");
         p1.add(tile);
         pussel.add(p2, BorderLayout.SOUTH);
         p2.add(reset);
@@ -66,15 +81,21 @@ public class Main extends JFrame implements ActionListener {
     }
 
     public void knappar() {
-        pussel.add(p1);
         for (int i = 1; i < 16; i++) {
             String buttonLabel = numret();
             JButton tile = new JButton(buttonLabel);
             p1.add(tile);
+            list[i] = buttonLabel;
+            list2.add(buttonLabel);
             tile.addActionListener(this);
+
         }
+
+        pussel.add(p1);
         p1.add(blankTile);
-        pussel.add(p2, BorderLayout.SOUTH);
+        list[15] = "blank";
+        list2.add("blank");
+        pussel.add(p2);
         p2.add(reset);
         p2.add(order);
         p2.add(count);
@@ -82,6 +103,9 @@ public class Main extends JFrame implements ActionListener {
         reset.addActionListener(this);
         order.addActionListener(this);
         blankTile.addActionListener(this);
+        for(var s:list2)
+            System.out.println(s);
+        System.out.println(list2.get(15) + "hej");
     }
 
     public String numret() {
@@ -97,6 +121,15 @@ public class Main extends JFrame implements ActionListener {
                 n = random.nextInt(15);
             }
         return s;
+    }
+    public void sortering (){
+        int x = 0;
+        for (int i=0; i<4; i++){
+            for (int j=0; j<4; j++){
+                place [i][j] = list[x];
+                x++;
+            }
+        }
     }
     public void actionPerformed(ActionEvent e) {
 
@@ -118,12 +151,17 @@ public class Main extends JFrame implements ActionListener {
             if (
                     isValidMove(tileIndex)
             ) {
+                swap(list2, list2.indexOf(tile.getText()), list2.lastIndexOf("blank"));
+
                 blankTile.setText(tile.getText());
                 blankTile.setVisible(true);
                 tile.setVisible(false);
                 blankTile = tile;
                 x++;
                 count.setText("Antal drag " + x);
+                System.out.println(list2.indexOf(tile.getText()) + " " + list2.lastIndexOf("blank"));
+                if (list2.equals(facit))
+                    System.out.println("grattis");
             }
         }
 
@@ -158,6 +196,6 @@ public class Main extends JFrame implements ActionListener {
     }
 
     public static void main (String[]args){
-        new Main();
+        new Main(15);
     }
 }
