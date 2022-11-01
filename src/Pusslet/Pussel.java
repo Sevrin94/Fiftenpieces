@@ -4,12 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
-
-import static java.util.Collections.swap;
 
 public class Pussel extends JFrame implements ActionListener{
     JFrame pussel = new JFrame();
@@ -22,9 +17,6 @@ public class Pussel extends JFrame implements ActionListener{
     int x = 0;
     JLabel count = new JLabel("Antal drag " + x);
 
-    List<String> list = new ArrayList<>();
-    List<String> facit = new ArrayList<>(Arrays.asList
-            ("1", "2","3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "blank"));
     int[] nummer = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 
     public Pussel(){
@@ -68,11 +60,9 @@ public class Pussel extends JFrame implements ActionListener{
             String buttonLabel = numret();
             JButton tile = new JButton(buttonLabel);
             p1.add(tile);
-            list.add(buttonLabel);
             tile.addActionListener(this);
         }
         p1.add(blankTile);
-        list.add("blank");
         blankTile.setVisible(false);
         reset.addActionListener(this);
         order.addActionListener(this);
@@ -83,19 +73,31 @@ public class Pussel extends JFrame implements ActionListener{
             String buttonLabel = String.valueOf(i);
             JButton tile = new JButton(buttonLabel);
             p1.add(tile);
-            list.add(buttonLabel);
             tile.addActionListener(this);
         }
         p1.add(blankTile);
-        list.add("blank");
         JButton tile = new JButton("15");
-        list.add("15");
         p1.add(tile);
         blankTile.setVisible(false);
         tile.addActionListener(this);
         reset.addActionListener(this);
         order.addActionListener(this);
         blankTile.addActionListener(this);
+    }
+    public boolean didIWin() {
+        for (int i = 0; i < p1.getComponents().length-1; i++) {
+            JButton tile = (JButton) p1.getComponent(i);
+            if (!tile.isVisible()) {
+                return false;
+            }
+            String tileText = tile.getText();
+            String expectedText = Integer.toString(i + 1);
+            if (!tileText.equals(expectedText)) {
+                return false;
+            }
+
+        }return true;
+
     }
     public void speletVunnet(){
         JOptionPane.showMessageDialog(null,  "Grattis! Det tog " + x + " drag",
@@ -122,15 +124,13 @@ public class Pussel extends JFrame implements ActionListener{
             if (
                     isValidMove(tileIndex)
             ) {
-                swap(list, list.indexOf(tile.getText()), list.lastIndexOf("blank"));
-
                 blankTile.setText(tile.getText());
                 blankTile.setVisible(true);
                 tile.setVisible(false);
                 blankTile = tile;
                 x++;
                 count.setText("Antal drag " + x);
-                if (list.equals(facit))
+                if(didIWin())
                     speletVunnet();
             }
         }
